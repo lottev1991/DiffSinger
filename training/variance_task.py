@@ -9,9 +9,8 @@ import utils.infer_utils
 from basics.base_dataset import BaseDataset
 from basics.base_task import BaseTask
 from modules.losses import DurationLoss, DiffusionLoss, RectifiedFlowLoss
-from modules.metrics import (
-    RawCurveAccuracy, RawCurveR2Score, RhythmCorrectness, PhonemeDurationAccuracy
-)
+from modules.metrics.curve import RawCurveAccuracy
+from modules.metrics.duration import RhythmCorrectness, PhonemeDurationAccuracy
 from modules.toplevel import DiffSingerVariance
 from utils.hparams import hparams
 from utils.plot import dur_to_figure, pitch_note_to_figure, curve_to_figure
@@ -145,7 +144,6 @@ class VarianceTask(BaseTask):
                 raise ValueError(f'Unknown diffusion type: {self.diffusion_type}')
             self.register_validation_loss('pitch_loss')
             self.register_validation_metric('pitch_acc', RawCurveAccuracy(tolerance=0.5))
-            self.register_validation_metric('pitch_r2', RawCurveR2Score())
         if self.predict_variances:
             if self.diffusion_type == 'ddpm':
                 self.var_loss = DiffusionLoss(loss_type=hparams['main_loss_type'])
@@ -156,8 +154,6 @@ class VarianceTask(BaseTask):
             else:
                 raise ValueError(f'Unknown diffusion type: {self.diffusion_type}')
             self.register_validation_loss('var_loss')
-            for name in self.variance_prediction_list:
-                self.register_validation_metric(f'{name}_r2', RawCurveR2Score())
 
     def run_model(self, sample, infer=False):
         spk_ids = sample['spk_ids'] if self.use_spk_id else None  # [B,]
@@ -293,8 +289,6 @@ class VarianceTask(BaseTask):
                         variance_len = self.valid_dataset.metadata[name][data_idx]
                         gt_variances = sample[name][i][:variance_len].unsqueeze(0)
                         pred_variances = variances_preds[name][i][:variance_len].unsqueeze(0)
-                        mask = (sample_get('mel2ph', i, data_idx) > 0) & ~sample_get('uv', i, data_idx)
-                        self.valid_metrics[f'{name}_r2'].update(pred=pred_variances, target=gt_variances, mask=mask)
                         self.plot_curve(
                             data_idx,
                             gt_curve=gt_variances,
