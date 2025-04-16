@@ -306,10 +306,7 @@ class RotaryEmbedding(Module):
             exists(self.cached_freqs) and \
             (offset + seq_len) <= self.cached_freqs_seq_len
         ):
-            freqs = self.cached_freqs[offset:(offset + seq_len)].detach()
-            # Fix issue about 'find_unused_parameters' when DDP training.(#244)
-            freqs = freqs + 0. * self.freqs.sum()
-            return freqs
+            return self.cached_freqs[offset:(offset + seq_len)].detach()
 
         freqs = self.freqs
 
