@@ -673,7 +673,7 @@ Size of TransformerFFNLayer convolution kernel size in FastSpeech2 encoder.
 <tr><td align="center"><b>scope</b></td><td>nn</td>
 <tr><td align="center"><b>customizability</b></td><td>not recommended</td>
 <tr><td align="center"><b>type</b></td><td>int</td>
-<tr><td align="center"><b>default</b></td><td>3</td>
+<tr><td align="center"><b>default</b></td><td>9</td>
 </tbody></table>
 
 ### enc_layers
