@@ -106,8 +106,9 @@ class PhonemeDictionary:
                 if not has_assigned:
                     merged_group = sorted(merged_groups[merged_phonemes_inverted_index[phoneme]])
                     merged_from_langs = {
-                        (alias.split('/', maxsplit=1)[0] if '/' in alias else None)
+                        alias.split('/', maxsplit=1)[0]
                         for alias in merged_group
+                        if '/' in alias
                     }
                     id_to_phone.append(tuple(merged_group))
                     idx += 1
