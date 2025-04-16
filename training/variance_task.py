@@ -281,7 +281,6 @@ class VarianceTask(BaseTask):
                         gt_pitch = sample_get('pitch', i, data_idx)
                         mask = (sample_get('mel2ph', i, data_idx) > 0) & ~sample_get('uv', i, data_idx)
                         self.valid_metrics['pitch_acc'].update(pred=pred_pitch, target=gt_pitch, mask=mask)
-                        self.valid_metrics['pitch_r2'].update(pred=pred_pitch, target=gt_pitch, mask=mask)
                         self.plot_pitch(
                             data_idx,
                             gt_pitch=gt_pitch,
